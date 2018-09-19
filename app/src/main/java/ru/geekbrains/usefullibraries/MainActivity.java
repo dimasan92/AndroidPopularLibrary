@@ -15,6 +15,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
@@ -57,7 +58,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @ProvidePresenter
     public MainPresenter provideMainPresenter() {
-        presenter = new MainPresenter();
+        presenter = new MainPresenter(AndroidSchedulers.mainThread());
         return presenter;
     }
 

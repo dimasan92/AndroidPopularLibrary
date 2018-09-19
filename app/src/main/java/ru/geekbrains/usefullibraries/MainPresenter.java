@@ -3,6 +3,8 @@ package ru.geekbrains.usefullibraries;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
+import io.reactivex.Scheduler;
+
 @InjectViewState
 public class MainPresenter extends MvpPresenter<MainView> {
 
@@ -10,10 +12,12 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private static final int COUNTER_FOR_BUTTON_TWO = 1;
     private static final int COUNTER_FOR_BUTTON_THREE = 2;
 
-    private CounterModel model;
+    private final CounterModel model;
+    private final Scheduler uiScheduler;
 
-    MainPresenter() {
+    MainPresenter(Scheduler uiScheduler) {
         this.model = new CounterModel();
+        this.uiScheduler = uiScheduler;
     }
 
     void counterButtonOneClick() {
