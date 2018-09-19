@@ -3,7 +3,12 @@ package ru.geekbrains.usefullibraries;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
+
 class CounterModel {
+
+    private static final int ADDITION = 1;
 
     private List<Integer> counters;
 
@@ -14,8 +19,10 @@ class CounterModel {
         counters.add(0);
     }
 
-    Integer calculate(int index) {
-        counters.set(index, counters.get(index) + 1);
-        return counters.get(index);
+    Single<Integer> calculate(int index) {
+        return Single.fromCallable(() -> counters.set(index, counters.get(index) + ADDITION))
+                .subscribeOn(Schedulers.computation())
+                .map(integer -> integer + ADDITION)
+                .observeOn(Schedulers.io());
     }
 }
