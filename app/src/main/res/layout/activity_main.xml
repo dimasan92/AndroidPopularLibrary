@@ -29,4 +29,19 @@
         android:layout_centerHorizontal="true"
         android:text="@string/zero" />
 
+    <EditText
+        android:id="@+id/et_bind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_three"
+        android:layout_centerHorizontal="true"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/tv_bind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_bind"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
