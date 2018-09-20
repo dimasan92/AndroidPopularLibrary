@@ -12,4 +12,6 @@ public interface MainView extends MvpView {
     void setButtonTwoText(int val);
 
     void setButtonThreeText(int val);
+
+    void setTextViewText(CharSequence sequence);
 }

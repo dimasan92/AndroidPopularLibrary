@@ -16,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
 
@@ -34,8 +33,6 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @InjectPresenter
     MainPresenter presenter;
 
-    private Disposable editTextDisposable;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,16 +41,15 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        editTextDisposable = RxTextView.textChanges(bindEditText)
-                .subscribe(bindTextView::setText);
+    protected void onResume() {
+        super.onResume();
+        presenter.resume(RxTextView.textChanges(bindEditText));
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        editTextDisposable.dispose();
+    protected void onPause() {
+        super.onPause();
+        presenter.pause();
     }
 
     @ProvidePresenter
@@ -75,6 +71,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @OnClick(R.id.btn_three)
     public void onButtonThreeClick(Button button) {
         presenter.counterButtonThreeClick();
+    }
+
+    @Override
+    public void setTextViewText(CharSequence sequence) {
+        bindTextView.setText(sequence);
     }
 
     @Override
