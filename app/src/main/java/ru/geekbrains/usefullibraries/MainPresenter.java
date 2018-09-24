@@ -3,30 +3,49 @@ package ru.geekbrains.usefullibraries;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
-import io.reactivex.Observable;
+import java.io.InputStream;
+
 import io.reactivex.Scheduler;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 @InjectViewState
 public class MainPresenter extends MvpPresenter<MainView> {
 
-    private final CounterModel model;
     private final Scheduler uiScheduler;
+    private final MainModel model;
+    private Disposable interrupter;
 
-    private final CompositeDisposable disposables;
-
-    MainPresenter(Scheduler uiScheduler) {
-        this.model = new CounterModel();
+    MainPresenter(Scheduler uiScheduler, ImageConverter converter) {
         this.uiScheduler = uiScheduler;
-        disposables = new CompositeDisposable();
+        model = new MainModel(converter);
     }
 
-    void resume() {
+    void onConvertClick() {
+        getViewState().openImageChooser();
     }
 
-    void pause() {
+    void successReceivedImageData(InputStream dataStream) {
+        getViewState().showConversion();
+        interrupter = model.convertImage(dataStream)
+                .observeOn(uiScheduler)
+                .subscribe(success -> {
+                    if (success) {
+                        getViewState().showSuccessConversionMessage();
+                    } else {
+                        getViewState().showErrorConversionMessage();
+                    }
+                }, throwable -> getViewState().showErrorConversionMessage());
+    }
 
+    void cancelConverting() {
+        interrupter.dispose();
+    }
+
+    void errorReceivedImageData() {
+        getViewState().showErrorLoadMessage();
+    }
+
+    void onFileListClick() {
+        getViewState().showFileList();
     }
 }

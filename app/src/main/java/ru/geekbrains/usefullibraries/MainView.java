@@ -6,4 +6,16 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 @StateStrategyType(AddToEndSingleStrategy.class)
 interface MainView extends MvpView {
+
+    void openImageChooser();
+
+    void showConversion();
+
+    void showSuccessConversionMessage();
+
+    void showErrorConversionMessage();
+
+    void showErrorLoadMessage();
+
+    void showFileList();
 }

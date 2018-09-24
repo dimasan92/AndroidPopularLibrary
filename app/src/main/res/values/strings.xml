@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">UsefulLibraries</string>
     <string name="btn_convert_image">Choose image to convert</string>
+    <string name="choose_file">Choose file</string>
+    <string name="error_load_message">Image can\'t load</string>
+    <string name="image_is_converting">Image is converting</string>
+    <string name="error_convert">Conversion error</string>
+    <string name="success_convert">Image was successfully converted</string>
+    <string name="cancel_converting">Cancel converting</string>
+    <string name="show_file_list">Show file list</string>
 </resources>
