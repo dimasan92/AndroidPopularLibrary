@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">UsefulLibraries</string>
-    <string name="zero">0</string>
+    <string name="btn_convert_image">Choose image to convert</string>
 </resources>
