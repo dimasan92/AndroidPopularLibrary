@@ -9,7 +9,7 @@ import ru.geekbrains.usefullibraries.mvp.model.image.IImageLoader;
 public final class PicassoImageLoader implements IImageLoader<ImageView> {
 
     @Override
-    public void loadInto(String url, ImageView container) {
+    public void loadInto(final String url, final ImageView container) {
         Picasso.get().load(url).into(container);
     }
 }

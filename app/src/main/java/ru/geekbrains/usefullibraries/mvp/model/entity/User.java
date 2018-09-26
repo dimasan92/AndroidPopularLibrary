@@ -8,10 +8,13 @@ public final class User {
     private final String login;
     @Expose
     private final String avatarUrl;
+    @Expose
+    private final String reposUrl;
 
-    public User(String login, String avatarUrl) {
+    public User(String login, String avatarUrl, String reposUrl) {
         this.login = login;
         this.avatarUrl = avatarUrl;
+        this.reposUrl = reposUrl;
     }
 
     public String getLogin() {
@@ -20,5 +23,9 @@ public final class User {
 
     public String getAvatarUrl() {
         return avatarUrl;
+    }
+
+    public String getReposUrl() {
+        return reposUrl;
     }
 }

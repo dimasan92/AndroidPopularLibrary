@@ -14,18 +14,20 @@ import ru.geekbrains.usefullibraries.mvp.model.image.IImageLoader;
 public final class GlideImageLoader implements IImageLoader<ImageView> {
 
     @Override
-    public void loadInto(String url, ImageView container) {
+    public void loadInto(final String url, final ImageView container) {
         GlideApp.with(container.getContext())
                 .asBitmap()
                 .load(url)
                 .listener(new RequestListener<Bitmap>() {
                     @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                Target<Bitmap> target, boolean isFirstResource) {
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
+                                                   DataSource dataSource, boolean isFirstResource) {
                         return false;
                     }
                 })

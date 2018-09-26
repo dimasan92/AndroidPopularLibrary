@@ -4,10 +4,14 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
+import ru.geekbrains.usefullibraries.mvp.presenter.IReposListPresenter;
+
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
 
-    void setUsernameText(String username);
+    void initList(final IReposListPresenter reposListPresenter);
 
-    void loadImage(String url);
+    void setUsernameText(final String username);
+
+    void loadImage(final String url);
 }
