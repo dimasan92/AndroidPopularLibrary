@@ -40,6 +40,12 @@ public final class MainPresenter extends MvpPresenter<MainView> {
         getViewState().initList(reposListPresenter);
     }
 
+    @Override
+    public void detachView(MainView view) {
+        super.detachView(view);
+        reposListPresenter.detachView();
+    }
+
     public void viewIsReady() {
         if (!isReposDownloaded) {
             loadData();
@@ -83,6 +89,11 @@ public final class MainPresenter extends MvpPresenter<MainView> {
         @Override
         public void attachView(final ReposListView view) {
             this.view = view;
+        }
+
+        @Override
+        public void detachView() {
+            view = null;
         }
 
         @Override

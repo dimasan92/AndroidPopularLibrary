@@ -11,6 +11,8 @@ public interface IReposListPresenter {
 
     void attachView(final ReposListView view);
 
+    void detachView();
+
     void bindViewAt(int position, ReposListView.RepoRowView view);
 
     int getReposCount();
