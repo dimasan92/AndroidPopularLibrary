@@ -1,7 +1,6 @@
 package ru.geekbrains.usefullibraries.mvp.model.api;
 
 import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import retrofit2.Retrofit;
@@ -10,25 +9,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class ApiHolder {
 
-    private static final ApiHolder instance = new ApiHolder();
+    private static ApiHolder instance = new ApiHolder();
 
-    private IDataSource api;
-
-    private ApiHolder() {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-        api = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build()
-                .create(IDataSource.class);
+    public static ApiHolder getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new ApiHolder();
+        }
+        return instance;
     }
 
-    public static IDataSource getApi() {
-        return instance.api;
+    private ApiService api;
+
+    private ApiHolder()
+    {
+        api = new Retrofit.Builder()
+                .baseUrl("https://api.github.com/")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
+                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()))
+                .build()
+                .create(ApiService.class);
+    }
+
+    public ApiService getApi()
+    {
+        return api;
     }
 }

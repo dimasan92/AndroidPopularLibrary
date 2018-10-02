@@ -1,15 +1,14 @@
 package ru.geekbrains.usefullibraries.mvp.model.entity;
 
-import com.google.gson.annotations.Expose;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class User {
 
-    @Expose
-    private final String login;
-    @Expose
-    private final String avatarUrl;
-    @Expose
-    private final String reposUrl;
+    private String login;
+    private String avatarUrl;
+    private String reposUrl;
+    private List<Repository> repos = new ArrayList<>();
 
     public User(String login, String avatarUrl, String reposUrl) {
         this.login = login;
@@ -17,15 +16,35 @@ public final class User {
         this.reposUrl = reposUrl;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getReposUrl() {
         return reposUrl;
+    }
+
+    public void setReposUrl(String reposUrl) {
+        this.reposUrl = reposUrl;
+    }
+
+    public List<Repository> getRepos() {
+        return repos;
+    }
+
+    public void setRepos(List<Repository> repos) {
+        this.repos = repos;
     }
 }
