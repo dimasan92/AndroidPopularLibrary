@@ -22,11 +22,11 @@ public final class App extends Application {
         Paper.init(this);
         ActiveAndroid.initialize(this);
 
+        Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-        Realm.init(this);
     }
 
     public static App getInstance() {

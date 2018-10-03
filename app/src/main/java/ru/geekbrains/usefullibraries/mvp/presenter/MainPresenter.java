@@ -2,15 +2,17 @@ package ru.geekbrains.usefullibraries.mvp.presenter;
 
 import android.annotation.SuppressLint;
 
+import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
 import io.reactivex.Scheduler;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
-import ru.geekbrains.usefullibraries.mvp.model.repo.RealmUserRepo;
+import ru.geekbrains.usefullibraries.mvp.model.repo.UserRepo;
 import ru.geekbrains.usefullibraries.mvp.view.MainView;
 import ru.geekbrains.usefullibraries.mvp.view.RepoRowView;
 import timber.log.Timber;
 
+@InjectViewState
 public final class MainPresenter extends MvpPresenter<MainView> {
 
     class RepoListPresenter implements IRepoListPresenter {
@@ -30,12 +32,12 @@ public final class MainPresenter extends MvpPresenter<MainView> {
 
     private RepoListPresenter repoListPresenter = new RepoListPresenter();
     private Scheduler scheduler;
-    private RealmUserRepo userRepo;
+    private UserRepo userRepo;
     private User user;
 
     public MainPresenter(Scheduler scheduler) {
         this.scheduler = scheduler;
-        userRepo = new RealmUserRepo();
+        userRepo = new UserRepo();
     }
 
     @Override
