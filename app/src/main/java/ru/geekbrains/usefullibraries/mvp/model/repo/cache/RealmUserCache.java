@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.realm.Realm;
-import io.realm.RealmList;
 import ru.geekbrains.usefullibraries.mvp.model.entity.Repository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
 import ru.geekbrains.usefullibraries.mvp.model.entity.realm.RealmRepository;

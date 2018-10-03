@@ -57,15 +57,15 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                     getViewState().hideLoading();
                     getViewState().showAvatar(user.getAvatarUrl());
                     getViewState().setUsername(user.getLogin());
-                    userRepo.getUserRepos(user)
-                            .observeOn(scheduler)
-                            .subscribe(repositories -> {
-                                this.user.setRepos(repositories);
-                                getViewState().updateRepoList();
-                            }, throwable -> {
-                                Timber.e(throwable, "Failed to get user repos");
-                                getViewState().showError(throwable.getMessage());
-                            });
+//                    userRepo.getUserRepos(user)
+//                            .observeOn(scheduler)
+//                            .subscribe(repositories -> {
+//                                this.user.setRepos(repositories);
+//                                getViewState().updateRepoList();
+//                            }, throwable -> {
+//                                Timber.e(throwable, "Failed to get user repos");
+//                                getViewState().showError(throwable.getMessage());
+//                            });
                 }, throwable -> {
                     Timber.e(throwable, "Failed to get user");
                     getViewState().showError(throwable.getMessage());

@@ -1,5 +1,6 @@
 package ru.geekbrains.usefullibraries.mvp.model.image.android;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
@@ -9,25 +10,32 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import java.io.ByteArrayOutputStream;
-
-import io.paperdb.Paper;
-import ru.geekbrains.usefullibraries.Utils;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import ru.geekbrains.usefullibraries.mvp.model.NetworkStatus;
 import ru.geekbrains.usefullibraries.mvp.model.image.ImageLoader;
+import ru.geekbrains.usefullibraries.mvp.model.repo.imagecache.IImageCache;
+import ru.geekbrains.usefullibraries.mvp.model.repo.imagecache.RealmImageCache;
 
 public final class ImageLoaderGlide implements ImageLoader<ImageView> {
 
+    private final IImageCache imageCache;
+
+    public ImageLoaderGlide() {
+        imageCache = new RealmImageCache();
+    }
+
+    @SuppressLint("CheckResult")
     @Override
     public void loadInto(@Nullable String url, ImageView container) {
-        String sha1 = Utils.SHA1(url);
         if (NetworkStatus.isOffline()) {
-            if (Paper.book("images").contains(sha1)) {
-                byte[] bytes = Paper.book("images").read(sha1);
-                GlideApp.with(container.getContext())
-                        .load(bytes)
-                        .into(container);
-            }
+            imageCache.getCachedAvatar(url, container.getContext())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(file -> GlideApp.with(container.getContext())
+                                    .load(file)
+                                    .into(container),
+                            Throwable::printStackTrace);
         } else {
             GlideApp.with(container.getContext()).asBitmap().load(url).listener(new RequestListener<Bitmap>() {
 
@@ -40,9 +48,7 @@ public final class ImageLoaderGlide implements ImageLoader<ImageView> {
                 @Override
                 public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target,
                                                DataSource dataSource, boolean isFirstResource) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    Paper.book("images").write(sha1, stream.toByteArray());
+                    imageCache.saveAvatar(resource, container.getContext(), url);
                     return false;
                 }
             }).into(container);
