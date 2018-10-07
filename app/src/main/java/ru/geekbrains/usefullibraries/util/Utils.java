@@ -1,4 +1,4 @@
-package ru.geekbrains.usefullibraries;
+package ru.geekbrains.usefullibraries.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

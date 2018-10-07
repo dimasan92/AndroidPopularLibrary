@@ -1,4 +1,4 @@
-package ru.geekbrains.usefullibraries.mvp.model.repo.cache;
+package ru.geekbrains.usefullibraries.mvp.model.repo.usercache;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
@@ -7,32 +7,30 @@ import com.activeandroid.query.Select;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import io.reactivex.Single;
 import ru.geekbrains.usefullibraries.mvp.model.entity.Repository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
 import ru.geekbrains.usefullibraries.mvp.model.entity.activeandroid.AARepository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.activeandroid.AAUser;
 
-public final class AAUserCache implements IUserCache {
+@Singleton
+public final class AAUserCache implements UserCache {
 
-    @Override
-    public void saveUser(User user, String username) {
-        AAUser aaUser = new Select()
-                .from(AAUser.class)
-                .where("login = ?", username)
-                .executeSingle();
-        if (aaUser == null) {
-            aaUser = new AAUser();
-            aaUser.login = username;
-        }
-        aaUser.avatarUrl = user.getAvatarUrl();
-        aaUser.reposUrl = user.getReposUrl();
-        aaUser.save();
+    @Inject
+    AAUserCache() {
     }
 
     @Override
-    public Observable<User> getCachedUser(String username) {
-        return Observable.create(emitter -> {
+    public void saveUser(User user) {
+        new AAUser(user.getLogin(), user.getAvatarUrl(), user.getReposUrl()).save();
+    }
+
+    @Override
+    public Single<User> getCachedUser(String username) {
+        return Single.create(emitter -> {
             final AAUser aaUser = new Select()
                     .from(AAUser.class)
                     .where("login = ?", username)
@@ -41,8 +39,7 @@ public final class AAUserCache implements IUserCache {
             if (aaUser == null) {
                 emitter.onError(new RuntimeException("No such user in cache"));
             } else {
-                emitter.onNext(new User(aaUser.login, aaUser.avatarUrl, aaUser.reposUrl));
-                emitter.onComplete();
+                emitter.onSuccess(new User(aaUser.getLogin(), aaUser.getAvatarUrl(), aaUser.getReposUrl()));
             }
         });
     }
@@ -55,10 +52,7 @@ public final class AAUserCache implements IUserCache {
                 .executeSingle();
 
         if (aaUser == null) {
-            aaUser = new AAUser();
-            aaUser.login = user.getLogin();
-            aaUser.avatarUrl = user.getAvatarUrl();
-            aaUser.reposUrl = user.getReposUrl();
+            aaUser = new AAUser(user.getLogin(), user.getAvatarUrl(), user.getReposUrl());
             aaUser.save();
         }
 
@@ -67,11 +61,7 @@ public final class AAUserCache implements IUserCache {
         ActiveAndroid.beginTransaction();
         try {
             for (Repository repository : repos) {
-                AARepository aaRepository = new AARepository();
-                aaRepository.id = repository.getId();
-                aaRepository.name = repository.getName();
-                aaRepository.user = aaUser;
-                aaRepository.save();
+                new AARepository(repository.getId(), repository.getName(), aaUser).save();
             }
             ActiveAndroid.setTransactionSuccessful();
         } finally {
@@ -80,8 +70,8 @@ public final class AAUserCache implements IUserCache {
     }
 
     @Override
-    public Observable<List<Repository>> getUserRepos(User user) {
-        return Observable.create(emitter -> {
+    public Single<List<Repository>> getUserRepos(User user) {
+        return Single.create(emitter -> {
             final AAUser aaUser = new Select()
                     .from(AAUser.class)
                     .where("login = ?", user.getLogin())
@@ -90,12 +80,11 @@ public final class AAUserCache implements IUserCache {
             if (aaUser == null) {
                 emitter.onError(new RuntimeException("No such user in cache"));
             } else {
-                List<Repository> repos = new ArrayList<>();
-                for (AARepository aaRepository : aaUser.repositories()) {
-                    repos.add(new Repository(aaRepository.id, aaRepository.name));
+                final List<Repository> repos = new ArrayList<>();
+                for (AARepository aaRepository : aaUser.getRepositories()) {
+                    repos.add(new Repository(aaRepository.getGithubId(), aaRepository.getName()));
                 }
-                emitter.onNext(repos);
-                emitter.onComplete();
+                emitter.onSuccess(repos);
             }
         });
     }

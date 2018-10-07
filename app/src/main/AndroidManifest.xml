@@ -5,7 +5,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".App"
@@ -16,6 +18,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="PopularLibrary" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="ru.geekbrains.usefullibraries.mvp.model.entity.activeandroid.AAAvatar,
+            ru.geekbrains.usefullibraries.mvp.model.entity.activeandroid.AARepository,
+            ru.geekbrains.usefullibraries.mvp.model.entity.activeandroid.AAAvatar" />
+
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

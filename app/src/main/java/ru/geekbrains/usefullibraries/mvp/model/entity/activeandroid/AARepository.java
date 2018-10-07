@@ -8,11 +8,30 @@ import com.activeandroid.annotation.Table;
 public final class AARepository extends Model {
 
     @Column(name = "github_id")
-    public String id;
+    private final String githubId;
 
     @Column(name = "name")
-    public String name;
+    private final String name;
 
     @Column(name = "user")
-    public AAUser user;
+    private final AAUser user;
+
+    public AARepository(String githubId, String name, AAUser user) {
+        super();
+        this.githubId = githubId;
+        this.name = name;
+        this.user = user;
+    }
+
+    public String getGithubId() {
+        return githubId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public AAUser getUser() {
+        return user;
+    }
 }

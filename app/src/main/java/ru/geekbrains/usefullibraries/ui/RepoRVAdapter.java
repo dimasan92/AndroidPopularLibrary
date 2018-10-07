@@ -10,14 +10,14 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.geekbrains.usefullibraries.R;
-import ru.geekbrains.usefullibraries.mvp.presenter.IRepoListPresenter;
+import ru.geekbrains.usefullibraries.mvp.presenter.RepoListPresenter;
 import ru.geekbrains.usefullibraries.mvp.view.RepoRowView;
 
 final class RepoRVAdapter extends RecyclerView.Adapter<RepoRVAdapter.ViewHolder> {
 
-    private final IRepoListPresenter presenter;
+    private final RepoListPresenter presenter;
 
-    RepoRVAdapter(IRepoListPresenter presenter) {
+    RepoRVAdapter(RepoListPresenter presenter) {
         this.presenter = presenter;
     }
 

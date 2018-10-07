@@ -1,6 +1,12 @@
 package ru.geekbrains.usefullibraries.ui;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,37 +19,52 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import ru.geekbrains.usefullibraries.App;
 import ru.geekbrains.usefullibraries.R;
 import ru.geekbrains.usefullibraries.mvp.model.image.ImageLoader;
 import ru.geekbrains.usefullibraries.mvp.model.image.android.ImageLoaderGlide;
+import ru.geekbrains.usefullibraries.mvp.model.image.imagecache.RealmImageCache;
 import ru.geekbrains.usefullibraries.mvp.presenter.MainPresenter;
 import ru.geekbrains.usefullibraries.mvp.view.MainView;
+import ru.geekbrains.usefullibraries.util.FilesUtils;
 
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
 
-    @BindView(R.id.iv_avatar)
-    ImageView avatarImageView;
-    @BindView(R.id.tv_error)
-    TextView errorTextView;
-    @BindView(R.id.tv_username)
-    TextView usernameTextView;
+    private static final int PERMISSIONS_REQUEST_ID = 0;
+
+    private static final String[] permissons = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     @BindView(R.id.pb_loading)
     ProgressBar loadingProgressBar;
+    @BindView(R.id.iv_avatar)
+    ImageView avatarImageView;
+    @BindView(R.id.tv_username)
+    TextView usernameTextView;
+    @BindView(R.id.tv_error)
+    TextView errorTextView;
     @BindView(R.id.rv_repos)
     RecyclerView reposRecyclerView;
 
     @InjectPresenter
     MainPresenter presenter;
 
+    @Named("glide_loader")
+    @Inject
+    ImageLoader<ImageView> imageLoader;
+
     private RepoRVAdapter adapter;
-    private ImageLoader<ImageView> imageLoader;
 
     @ProvidePresenter
     public MainPresenter provideMainPresenter() {
-        return new MainPresenter(AndroidSchedulers.mainThread());
+        MainPresenter presenter = new MainPresenter(AndroidSchedulers.mainThread());
+        App.getInstance().getAppComponent().inject(presenter);
+        return presenter;
     }
 
     @Override
@@ -52,27 +73,34 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        imageLoader = new ImageLoaderGlide();
+        App.getInstance().getAppComponent().inject(this);
 
         reposRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         reposRecyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-    }
 
-    @Override
-    public void init() {
         adapter = new RepoRVAdapter(presenter.getRepoListPresenter());
         reposRecyclerView.setAdapter(adapter);
+
+        checkPermissions();
     }
 
     @Override
-    public void showAvatar(String avatarUrl) {
-        imageLoader.loadInto(avatarUrl, avatarImageView);
-    }
-
-    @Override
-    public void showError(String message) {
-        errorTextView.setText(message);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ID:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onPermissionsGranted();
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.permissons_required)
+                            .setMessage(R.string.permissions_required_message)
+                            .setPositiveButton("OK", (dialog, which) -> requestPermissions())
+                            .setOnCancelListener(dialog -> requestPermissions())
+                            .create()
+                            .show();
+                }
+        }
     }
 
     @Override
@@ -86,6 +114,11 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     }
 
     @Override
+    public void showAvatar(String avatarUrl) {
+        imageLoader.loadInto(avatarUrl, avatarImageView);
+    }
+
+    @Override
     public void updateRepoList() {
         adapter.notifyDataSetChanged();
     }
@@ -93,5 +126,29 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     @Override
     public void setUsername(String username) {
         usernameTextView.setText(username);
+    }
+
+    @Override
+    public void showError(String message) {
+        errorTextView.setText(message);
+    }
+
+    private void checkPermissions() {
+        for (String permission : permissons) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions();
+                return;
+            }
+        }
+
+        onPermissionsGranted();
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, permissons, PERMISSIONS_REQUEST_ID);
+    }
+
+    private void onPermissionsGranted() {
+        presenter.onPermissionsGranted();
     }
 }

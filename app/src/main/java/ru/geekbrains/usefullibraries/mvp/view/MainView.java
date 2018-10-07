@@ -7,17 +7,15 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
 
-    void showAvatar(String avatarUrl);
-
-    void showError(String message);
-
-    void setUsername(String username);
-
     void showLoading();
 
     void hideLoading();
 
+    void showAvatar(String avatarUrl);
+
+    void setUsername(String username);
+
     void updateRepoList();
 
-    void init();
+    void showError(String message);
 }

@@ -6,6 +6,26 @@ import io.realm.annotations.PrimaryKey;
 public class RealmRepository extends RealmObject {
 
     @PrimaryKey
-    public String id;
-    public String name;
+    private String id;
+    private String name;
+
+    public RealmRepository() {
+    }
+
+    public RealmRepository(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

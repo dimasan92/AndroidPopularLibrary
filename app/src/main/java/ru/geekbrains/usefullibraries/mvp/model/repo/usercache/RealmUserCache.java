@@ -1,48 +1,57 @@
-package ru.geekbrains.usefullibraries.mvp.model.repo.cache;
+package ru.geekbrains.usefullibraries.mvp.model.repo.usercache;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import io.reactivex.Single;
 import io.realm.Realm;
 import ru.geekbrains.usefullibraries.mvp.model.entity.Repository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
 import ru.geekbrains.usefullibraries.mvp.model.entity.realm.RealmRepository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.realm.RealmUser;
 
-public final class RealmUserCache implements IUserCache {
+@Singleton
+public final class RealmUserCache implements UserCache {
+
+    @Inject
+    RealmUserCache() {
+    }
 
     @Override
-    public void saveUser(User user, String username) {
+    public void saveUser(User user) {
         final Realm realm = Realm.getDefaultInstance();
-        final RealmUser realmUser = realm.where(RealmUser.class).equalTo("login", username).findFirst();
+        final RealmUser realmUser = realm.where(RealmUser.class)
+                .equalTo("login", user.getLogin()).findFirst();
 
         if (realmUser == null) {
             realm.executeTransaction(innerRealm -> {
-                RealmUser newRealmUser = innerRealm.createObject(RealmUser.class, username);
-                newRealmUser.avatarUrl = user.getAvatarUrl();
-                newRealmUser.reposUrl = user.getReposUrl();
+                RealmUser newRealmUser = innerRealm.createObject(RealmUser.class, user.getLogin());
+                newRealmUser.setAvatarUrl(user.getAvatarUrl());
+                newRealmUser.setReposUrl(user.getReposUrl());
             });
         } else {
             realm.executeTransaction(innerRealm -> {
-                realmUser.avatarUrl = user.getAvatarUrl();
-                realmUser.reposUrl = user.getReposUrl();
+                realmUser.setAvatarUrl(user.getAvatarUrl());
+                realmUser.setReposUrl(user.getReposUrl());
             });
         }
         realm.close();
     }
 
     @Override
-    public Observable<User> getCachedUser(String username) {
-        return Observable.create(emitter -> {
+    public Single<User> getCachedUser(String username) {
+        return Single.create(emitter -> {
             final Realm realm = Realm.getDefaultInstance();
             final RealmUser realmUser = realm.where(RealmUser.class)
                     .equalTo("login", username).findFirst();
             if (realmUser == null) {
                 emitter.onError(new RuntimeException("No such user in cache"));
             } else {
-                emitter.onNext(new User(realmUser.login, realmUser.avatarUrl, realmUser.reposUrl));
-                emitter.onComplete();
+                emitter.onSuccess(new User(realmUser.getLogin(), realmUser.getAvatarUrl(),
+                        realmUser.getReposUrl()));
             }
             realm.close();
         });
@@ -55,24 +64,24 @@ public final class RealmUserCache implements IUserCache {
         if (realmUser == null) {
             realm.executeTransaction(innerRealm -> {
                 RealmUser newRealmUser = innerRealm.createObject(RealmUser.class, user.getLogin());
-                newRealmUser.avatarUrl = user.getAvatarUrl();
-                newRealmUser.reposUrl = user.getReposUrl();
+                newRealmUser.setAvatarUrl(user.getAvatarUrl());
+                newRealmUser.setReposUrl(user.getReposUrl());
             });
         }
         realm.executeTransaction(innerRealm -> {
-            realmUser.repos.deleteAllFromRealm();
+            realmUser.getRepos().deleteAllFromRealm();
             for (Repository repository : repos) {
-                RealmRepository realmRepository = innerRealm.createObject(RealmRepository.class, repository.getId());
-                realmRepository.name = repository.getName();
-                realmUser.repos.add(realmRepository);
+                RealmRepository realmRepository = innerRealm.copyToRealm(
+                        new RealmRepository(repository.getId(), repository.getName()));
+                realmUser.getRepos().add(realmRepository);
             }
         });
         realm.close();
     }
 
     @Override
-    public Observable<List<Repository>> getUserRepos(User user) {
-        return Observable.create(emitter -> {
+    public Single<List<Repository>> getUserRepos(User user) {
+        return Single.create(emitter -> {
             final Realm realm = Realm.getDefaultInstance();
             final RealmUser realmUser = realm.where(RealmUser.class)
                     .equalTo("login", user.getLogin()).findFirst();
@@ -80,11 +89,10 @@ public final class RealmUserCache implements IUserCache {
                 emitter.onError(new RuntimeException("No such user in cache"));
             } else {
                 final List<Repository> repositories = new ArrayList<>();
-                for (RealmRepository realmRepository : realmUser.repos) {
-                    repositories.add(new Repository(realmRepository.id, realmRepository.name));
+                for (RealmRepository realmRepository : realmUser.getRepos()) {
+                    repositories.add(new Repository(realmRepository.getId(), realmRepository.getName()));
                 }
-                emitter.onNext(repositories);
-                emitter.onComplete();
+                emitter.onSuccess(repositories);
             }
             realm.close();
         });
