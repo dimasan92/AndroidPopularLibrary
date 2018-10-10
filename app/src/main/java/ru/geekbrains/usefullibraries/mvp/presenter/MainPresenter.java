@@ -57,7 +57,6 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                                 getViewState().updateRepoList();
                             }, throwable -> {
                                 Timber.e(throwable, "Failed to get user repos");
-                                getViewState().hideLoading();
                                 getViewState().showError(throwable.getMessage());
                             });
                 }, throwable -> {
