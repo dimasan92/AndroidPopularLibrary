@@ -17,11 +17,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.geekbrains.usefullibraries.mvp.model.api.ApiService;
 
 @Module
-public final class ApiModule {
+public class ApiModule {
 
     @Named("baseUrl")
     @Provides
-    String baseUrl() {
+    public String baseUrl() {
         return "https://api.github.com/";
     }
 
