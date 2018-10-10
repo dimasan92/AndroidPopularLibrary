@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import ru.geekbrains.usefullibraries.PaperImageCacheInstrumentedTest;
 import ru.geekbrains.usefullibraries.PaperUserCacheInstrumentedTest;
+import ru.geekbrains.usefullibraries.RealmImageCacheInstrumentedTest;
 import ru.geekbrains.usefullibraries.RealmUserCacheInstrumentedTest;
 import ru.geekbrains.usefullibraries.UserRepoInstrumentedTest;
 import ru.geekbrains.usefullibraries.di.modules.TestUtilsModule;
@@ -22,4 +23,6 @@ public interface TestComponent {
     void inject(RealmUserCacheInstrumentedTest test);
 
     void inject(PaperImageCacheInstrumentedTest test);
+
+    void inject(RealmImageCacheInstrumentedTest test);
 }
