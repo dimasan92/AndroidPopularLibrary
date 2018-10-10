@@ -26,8 +26,6 @@ public final class App extends Application {
         Timber.plant(new Timber.DebugTree());
         Paper.init(this);
 
-        ActiveAndroid.initialize(this);
-
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
