@@ -79,7 +79,7 @@ public class MainPresenterUnitTest {
 
     @Test
     public void loadInfoGetUserFailureTest() {
-        Throwable error = new RuntimeException("error get user");
+        Throwable error = new Exception("error get user");
         TestComponent testComponent = DaggerTestComponent.builder()
                 .testRepoModule(new TestRepoModule() {
                     @Override
@@ -104,7 +104,7 @@ public class MainPresenterUnitTest {
     @Test
     public void loadInfoGetUserSuccessGetReposFailureTest() {
         User user = new User("googlesamples", "avatarUrl", "reposUrl");
-        Throwable error = new RuntimeException("error get repos");
+        Throwable error = new Exception("error get repos");
         TestComponent testComponent = DaggerTestComponent.builder()
                 .testRepoModule(new TestRepoModule() {
                     @Override
