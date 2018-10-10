@@ -28,11 +28,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.geekbrains.usefullibraries.App;
 import ru.geekbrains.usefullibraries.R;
 import ru.geekbrains.usefullibraries.mvp.model.image.ImageLoader;
-import ru.geekbrains.usefullibraries.mvp.model.image.android.ImageLoaderGlide;
-import ru.geekbrains.usefullibraries.mvp.model.image.imagecache.RealmImageCache;
 import ru.geekbrains.usefullibraries.mvp.presenter.MainPresenter;
 import ru.geekbrains.usefullibraries.mvp.view.MainView;
-import ru.geekbrains.usefullibraries.util.FilesUtils;
 
 public final class MainActivity extends MvpAppCompatActivity implements MainView {
 
@@ -89,7 +86,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ID:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     onPermissionsGranted();
                 } else {
                     new AlertDialog.Builder(this)
