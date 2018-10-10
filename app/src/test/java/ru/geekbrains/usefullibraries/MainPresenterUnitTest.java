@@ -79,7 +79,6 @@ public class MainPresenterUnitTest {
 
     @Test
     public void loadInfoGetUserFailureTest() {
-        User user = new User("googlesamples", "avatarUrl", "reposUrl");
         Throwable error = new RuntimeException("error get user");
         TestComponent testComponent = DaggerTestComponent.builder()
                 .testRepoModule(new TestRepoModule() {
