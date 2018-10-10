@@ -19,8 +19,6 @@ import io.reactivex.schedulers.Schedulers;
 import ru.geekbrains.usefullibraries.mvp.model.NetworkStatus;
 import ru.geekbrains.usefullibraries.mvp.model.image.ImageLoader;
 import ru.geekbrains.usefullibraries.mvp.model.image.imagecache.ImageCache;
-import ru.geekbrains.usefullibraries.mvp.model.image.imagecache.RealmImageCache;
-import ru.geekbrains.usefullibraries.util.FilesUtils;
 
 @Singleton
 public final class ImageLoaderGlide implements ImageLoader<ImageView> {
