@@ -75,4 +75,58 @@ public class MainPresenterUnitTest {
         Mockito.verify(mainView).showAvatar(user.getAvatarUrl());
         Mockito.verify(mainView).updateRepoList();
     }
+
+
+    @Test
+    public void loadInfoGetUserFailureTest() {
+        User user = new User("googlesamples", "avatarUrl", "reposUrl");
+        Throwable error = new RuntimeException("error get user");
+        TestComponent testComponent = DaggerTestComponent.builder()
+                .testRepoModule(new TestRepoModule() {
+                    @Override
+                    public UserRepo provideUserRepo() {
+                        UserRepo userRepo = super.provideUserRepo();
+                        Mockito.when(userRepo.getUser("googlesamples"))
+                                .thenReturn(Single.create(emitter -> emitter.onError(error)));
+                        return userRepo;
+                    }
+                })
+                .build();
+
+        testComponent.inject(presenter);
+        presenter.attachView(mainView);
+        presenter.onPermissionsGranted();
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS);
+
+        Mockito.verify(mainView).hideLoading();
+        Mockito.verify(mainView).showError(error.getMessage());
+    }
+
+    @Test
+    public void loadInfoGetUserSuccessGetReposFailureTest() {
+        User user = new User("googlesamples", "avatarUrl", "reposUrl");
+        Throwable error = new RuntimeException("error get repos");
+        TestComponent testComponent = DaggerTestComponent.builder()
+                .testRepoModule(new TestRepoModule() {
+                    @Override
+                    public UserRepo provideUserRepo() {
+                        UserRepo userRepo = super.provideUserRepo();
+                        Mockito.when(userRepo.getUser("googlesamples")).thenReturn(Single.just(user));
+                        Mockito.when(userRepo.getUserRepos(user))
+                                .thenReturn(Single.create(emitter -> emitter.onError(error)));
+                        return userRepo;
+                    }
+                })
+                .build();
+
+        testComponent.inject(presenter);
+        presenter.attachView(mainView);
+        presenter.onPermissionsGranted();
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS);
+
+        Mockito.verify(mainView).hideLoading();
+        Mockito.verify(mainView).setUsername(user.getLogin());
+        Mockito.verify(mainView).showAvatar(user.getAvatarUrl());
+        Mockito.verify(mainView).showError(error.getMessage());
+    }
 }
