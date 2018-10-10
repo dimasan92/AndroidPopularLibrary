@@ -1,7 +1,6 @@
 package ru.geekbrains.usefullibraries;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -10,8 +9,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.observers.TestObserver;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import ru.geekbrains.usefullibraries.di.DaggerTestComponent;
 import ru.geekbrains.usefullibraries.mvp.model.entity.Repository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
@@ -23,14 +20,6 @@ public class RealmUserCacheInstrumentedTest {
 
     @Inject
     RealmUserCache cache;
-
-    @BeforeClass
-    public static void setupClass() {
-        RealmConfiguration configuration = Realm.getDefaultConfiguration();
-        if (configuration != null) {
-            Realm.deleteRealm(configuration);
-        }
-    }
 
     @Before
     public void setup() {
@@ -61,11 +50,10 @@ public class RealmUserCacheInstrumentedTest {
     @Test
     public void saveAndGetUserRepos() {
         final int count = 10;
-        final String repoName = "repo";
 
         final List<Repository> repos = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            repos.add(new Repository(Integer.toString(i), repoName + i));
+            repos.add(new Repository(Integer.toString(i), "repo" + i));
         }
 
         final User user = new User("some_login", "some_avatar_url", "some_repos_url");
@@ -79,8 +67,8 @@ public class RealmUserCacheInstrumentedTest {
 
         List<Repository> cachedRepos = observer.values().get(0);
         for (int i = 0; i < count; i++) {
-            assertEquals(repos.get(i).getId(), Integer.toString(i));
-            assertEquals(repos.get(i).getName(), repoName + i);
+            assertEquals(cachedRepos.get(i).getId(), repos.get(i).getId());
+            assertEquals(cachedRepos.get(i).getName(), cachedRepos.get(i).getName());
         }
     }
 }
