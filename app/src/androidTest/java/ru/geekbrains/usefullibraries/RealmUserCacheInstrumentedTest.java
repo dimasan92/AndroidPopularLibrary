@@ -1,6 +1,7 @@
 package ru.geekbrains.usefullibraries;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.observers.TestObserver;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import ru.geekbrains.usefullibraries.di.DaggerTestComponent;
 import ru.geekbrains.usefullibraries.mvp.model.entity.Repository;
 import ru.geekbrains.usefullibraries.mvp.model.entity.User;
@@ -20,6 +23,14 @@ public class RealmUserCacheInstrumentedTest {
 
     @Inject
     RealmUserCache cache;
+
+    @BeforeClass
+    public static void setupClass() {
+        RealmConfiguration configuration = Realm.getDefaultConfiguration();
+        if (configuration != null) {
+            Realm.deleteRealm(configuration);
+        }
+    }
 
     @Before
     public void setup() {
