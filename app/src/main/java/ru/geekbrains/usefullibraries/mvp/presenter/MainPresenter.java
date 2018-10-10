@@ -47,12 +47,12 @@ public final class MainPresenter extends MvpPresenter<MainView> {
                 .observeOn(uiScheduler)
                 .subscribe(user -> {
                     this.user = user;
+                    getViewState().hideLoading();
                     getViewState().setUsername(user.getLogin());
                     getViewState().showAvatar(user.getAvatarUrl());
                     userRepo.getUserRepos(user)
                             .observeOn(uiScheduler)
                             .subscribe(repositories -> {
-                                getViewState().hideLoading();
                                 this.user.setRepos(repositories);
                                 getViewState().updateRepoList();
                             }, throwable -> {
