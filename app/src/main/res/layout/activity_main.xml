@@ -1,47 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ru.geekbrains.usefullibraries.MainActivity">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_one"
+    <ProgressBar
+        android:id="@+id/pb_loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/zero" />
+        android:layout_centerInParent="true" />
 
-    <Button
-        android:id="@+id/btn_two"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btn_one"
-        android:layout_centerHorizontal="true"
-        android:text="@string/zero" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_three"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_two"
-        android:layout_centerHorizontal="true"
-        android:text="@string/zero" />
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
 
-    <EditText
-        android:id="@+id/et_bind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_three"
-        android:layout_centerHorizontal="true"
-        android:inputType="text" />
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_repos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_info" />
+
 
     <TextView
-        android:id="@+id/tv_bind"
+        android:id="@+id/tv_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/et_bind"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>

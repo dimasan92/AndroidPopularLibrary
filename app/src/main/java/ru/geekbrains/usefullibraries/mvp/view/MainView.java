@@ -1,4 +1,4 @@
-package ru.geekbrains.usefullibraries;
+package ru.geekbrains.usefullibraries.mvp.view;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
@@ -7,9 +7,15 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
 
-    void setButtonOneText(int val);
+    void showLoading();
 
-    void setButtonTwoText(int val);
+    void hideLoading();
 
-    void setButtonThreeText(int val);
+    void showAvatar(String avatarUrl);
+
+    void setUsername(String username);
+
+    void updateRepoList();
+
+    void showError(String message);
 }
